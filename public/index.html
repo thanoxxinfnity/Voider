@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voider 3D Studio — Text & Image to 3D</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧊</text></svg>" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "/vendor/three/build/three.module.js",
+        "three/addons/": "/vendor/three/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo">🧊 <b>Voider</b> 3D Studio</div>
+    <div class="sub">NVIDIA Microsoft TRELLIS — Real Text &amp; Image to 3D</div>
+    <button id="settingsBtn" class="ghost" title="API Key Settings">⚙️ Settings</button>
+  </header>
+
+  <!-- API key setup dialog -->
+  <dialog id="setupDialog">
+    <h2>🔑 NVIDIA API Key</h2>
+    <p>Apni <code>nvapi-...</code> key yahan paste karo. Ye sirf tumhare computer
+      pe <code>.env</code> file me save hoti hai — kahin upload nahi hoti.</p>
+    <input id="apiKeyInput" type="password" placeholder="nvapi-..." autocomplete="off" />
+    <div class="row">
+      <button id="saveKeyBtn" class="primary">Save karo</button>
+      <button id="closeSetupBtn" class="ghost">Band karo</button>
+    </div>
+    <p class="hint">Key nahi hai? <span class="mono">build.nvidia.com</span> pe free milti hai.</p>
+  </dialog>
+
+  <main>
+    <section class="panel generate-panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="text">📝 Text → 3D</button>
+        <button class="tab" data-tab="image">🖼️ Image → 3D</button>
+      </div>
+
+      <div id="tab-text" class="tab-body">
+        <label>Apna prompt likho (English me best results):</label>
+        <textarea id="promptInput" rows="3"
+          placeholder="Example: a fantasy sword with glowing blue runes, game asset"></textarea>
+        <button id="genTextBtn" class="primary big">⚡ 3D Model Banao</button>
+      </div>
+
+      <div id="tab-image" class="tab-body" hidden>
+        <label>Image upload karo (PNG / JPG / WebP):</label>
+        <div id="dropZone" class="dropzone">
+          <span id="dropHint">Yahan image drop karo ya click karke choose karo</span>
+          <img id="imgPreview" hidden alt="preview" />
+          <input id="imgInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+        </div>
+        <button id="genImageBtn" class="primary big">⚡ 3D Model Banao</button>
+      </div>
+
+      <p class="hint">💡 Generate dabane ke baad tum page band bhi kar do to
+        generation background me chalti rahegi — History me result mil jayega.</p>
+    </section>
+
+    <section class="panel viewer-panel">
+      <div id="viewer">
+        <div id="viewerMsg">Koi model select karo ya naya banao 👈</div>
+      </div>
+      <div id="viewerBar" hidden>
+        <span id="viewerTitle" class="mono"></span>
+        <div class="spacer"></div>
+        <label for="fmtSelect">Format:</label>
+        <select id="fmtSelect">
+          <option value="glb">GLB (original)</option>
+          <option value="gltf">GLTF</option>
+          <option value="obj">OBJ</option>
+          <option value="stl">STL</option>
+          <option value="ply">PLY</option>
+          <option value="usdz">USDZ (iOS AR)</option>
+        </select>
+        <button id="downloadBtn" class="primary">⬇️ Download</button>
+      </div>
+    </section>
+
+    <section class="panel history-panel">
+      <h2>🕘 History <button id="refreshBtn" class="ghost small">↻</button></h2>
+      <div id="historyList" class="history-list">
+        <p class="hint">Abhi tak koi generation nahi hui.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" hidden></div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
