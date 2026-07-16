@@ -20,7 +20,12 @@ app.use('/vendor/three', express.static(path.join(__dirname, 'node_modules/three
 // --- Config / API key setup ---------------------------------------------
 
 app.get('/api/config', (_req, res) => {
-  res.json({ hasKey: !!process.env.NVIDIA_API_KEY });
+  const key = process.env.NVIDIA_API_KEY || '';
+  res.json({
+    hasKey: !!key,
+    // Sirf masked version bhejte hain — poori key kabhi frontend pe nahi jaati.
+    maskedKey: key ? `${key.slice(0, 9)}...${key.slice(-4)}` : null,
+  });
 });
 
 app.post('/api/setup', (req, res) => {

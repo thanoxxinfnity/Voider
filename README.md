@@ -7,6 +7,9 @@ export karo. Koi fake nahi — asli NVIDIA API, asli GLB models. 🎮
 ## ✨ Features
 
 - 📝 **Text → 3D** — prompt likho, 3D model pao
+- 🧠 **AI Prompt Analysis** — Hindi/Hinglish/English kuch bhi likho, NVIDIA ka
+  Llama LLM pehle analyse karta hai ki tum asal me kya banwana chahte ho aur
+  perfect 3D-asset prompt banata hai — isse models bahut behtar bante hain
 - 🖼️ **Image → 3D** — koi bhi image (PNG/JPG/WebP) se 3D model
 - ⬇️ **Real export** har format me: **GLB, GLTF, OBJ, STL, PLY, USDZ**
 - 🕘 **History** — har generation save rehti hai, kabhi bhi dekho/download karo
@@ -58,10 +61,13 @@ Bas! Ab prompt likho ya image daalo aur **⚡ 3D Model Banao** dabao.
 
 - **Image → 3D**: Tumhari image seedha NVIDIA ke Microsoft TRELLIS API ko
   jaati hai, jo real textured GLB 3D model banata hai.
-- **Text → 3D**: Pehle TRELLIS ko direct prompt bheja jaata hai; agar hosted
-  TRELLIS sirf image input leta hai to app automatically NVIDIA ke
-  Stable Diffusion 3 se prompt ki image banata hai aur usse TRELLIS me
-  bhejta hai — result phir bhi 100% real TRELLIS 3D model hota hai.
+- **Text → 3D**: 3-step AI pipeline —
+  1. **Analyse**: NVIDIA ka Llama LLM tumhara prompt (kisi bhi language me)
+     samajh ke ek detailed single-object English prompt banata hai.
+  2. Pehle TRELLIS ko direct prompt bheja jaata hai; agar hosted TRELLIS
+     sirf image input leta hai to Stable Diffusion 3 se image banti hai.
+  3. TRELLIS us se real textured 3D model banata hai.
+  History me dikhta hai ki AI ne tumhare prompt ko kaise samjha.
 - **Background jobs**: Generation server par queue me chalti hai aur
   `data/` folder me save hoti hai, isliye browser band karne par bhi kuch
   nahi rukta.

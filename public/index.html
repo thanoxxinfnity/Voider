@@ -22,17 +22,21 @@
     <button id="settingsBtn" class="ghost" title="API Key Settings">⚙️ Settings</button>
   </header>
 
-  <!-- API key setup dialog -->
+  <!-- Settings / API key dialog -->
   <dialog id="setupDialog">
-    <h2>🔑 NVIDIA API Key</h2>
-    <p>Apni <code>nvapi-...</code> key yahan paste karo. Ye sirf tumhare computer
-      pe <code>.env</code> file me save hoti hai — kahin upload nahi hoti.</p>
+    <h2>⚙️ Settings</h2>
+    <div id="keyStatus" class="key-status">🔑 Koi API key set nahi hai</div>
+    <p>Apni NVIDIA <code>nvapi-...</code> key yahan paste karo. Ye sirf tumhare
+      computer pe <code>.env</code> file me save hoti hai — kahin upload nahi hoti.
+      Yehi ek key sab kuch chalati hai: AI prompt analysis (Llama), text-to-image
+      (Stable Diffusion 3) aur 3D generation (Microsoft TRELLIS).</p>
     <input id="apiKeyInput" type="password" placeholder="nvapi-..." autocomplete="off" />
     <div class="row">
       <button id="saveKeyBtn" class="primary">Save karo</button>
       <button id="closeSetupBtn" class="ghost">Band karo</button>
     </div>
-    <p class="hint">Key nahi hai? <span class="mono">build.nvidia.com</span> pe free milti hai.</p>
+    <p class="hint">Key nahi hai? <span class="mono">build.nvidia.com</span> pe free milti hai.
+      Kabhi bhi nayi key yahan paste karke badal sakte ho.</p>
   </dialog>
 
   <main>
@@ -43,9 +47,10 @@
       </div>
 
       <div id="tab-text" class="tab-body">
-        <label>Apna prompt likho (English me best results):</label>
+        <label>Apna prompt likho — Hindi, Hinglish, English sab chalega,
+          AI khud samajh ke perfect banayega 🧠:</label>
         <textarea id="promptInput" rows="3"
-          placeholder="Example: a fantasy sword with glowing blue runes, game asset"></textarea>
+          placeholder="Example: ek jalti hui talwar neele runes ke saath / a fantasy sword with glowing blue runes"></textarea>
         <button id="genTextBtn" class="primary big">⚡ 3D Model Banao</button>
       </div>
 
@@ -67,6 +72,7 @@
       <div id="viewer">
         <div id="viewerMsg">Koi model select karo ya naya banao 👈</div>
       </div>
+      <div id="aiInfo" class="ai-info" hidden></div>
       <div id="viewerBar" hidden>
         <span id="viewerTitle" class="mono"></span>
         <div class="spacer"></div>

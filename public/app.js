@@ -1,6 +1,7 @@
 // Voider 3D Studio frontend — viewer, exports, history, background polling.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import { OBJExporter } from 'three/addons/exporters/OBJExporter.js';
@@ -21,12 +22,26 @@ function toast(msg, isError = false) {
   toastTimer = setTimeout(() => (el.hidden = true), 4500);
 }
 
-// ---------- API key setup ----------
-async function checkKey() {
+// ---------- Settings / API key ----------
+async function refreshKeyStatus() {
   const cfg = await fetch('/api/config').then((r) => r.json());
-  if (!cfg.hasKey) $('setupDialog').showModal();
+  const el = $('keyStatus');
+  if (cfg.hasKey) {
+    el.textContent = `🔑 Key set hai: ${cfg.maskedKey} ✅`;
+    el.classList.add('ok');
+  } else {
+    el.textContent = '🔑 Koi API key set nahi hai — neeche paste karo';
+    el.classList.remove('ok');
+  }
+  return cfg.hasKey;
 }
-$('settingsBtn').onclick = () => $('setupDialog').showModal();
+async function checkKey() {
+  if (!(await refreshKeyStatus())) $('setupDialog').showModal();
+}
+$('settingsBtn').onclick = async () => {
+  await refreshKeyStatus();
+  $('setupDialog').showModal();
+};
 $('closeSetupBtn').onclick = () => $('setupDialog').close();
 $('saveKeyBtn').onclick = async () => {
   const key = $('apiKeyInput').value.trim();
@@ -38,6 +53,7 @@ $('saveKeyBtn').onclick = async () => {
   const data = await res.json();
   if (!res.ok) return toast(data.error, true);
   $('apiKeyInput').value = '';
+  await refreshKeyStatus();
   $('setupDialog').close();
   toast('✅ API key save ho gayi!');
 };
@@ -123,8 +139,11 @@ camera.position.set(1.6, 1.2, 1.6);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0x334, 1.2));
-const dir = new THREE.DirectionalLight(0xffffff, 2.2);
+// PBR environment lighting — real textured TRELLIS models iske bina dark dikhte hain.
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334466, 0.6));
+const dir = new THREE.DirectionalLight(0xffffff, 1.6);
 dir.position.set(3, 5, 2);
 scene.add(dir);
 const grid = new THREE.GridHelper(4, 20, 0x2a3352, 0x1b2236);
@@ -172,10 +191,22 @@ async function viewJob(job) {
       const box2 = new THREE.Box3().setFromObject(currentModel);
       currentModel.position.y -= box2.min.y;
       scene.add(currentModel);
+      // camera ko model pe fit karo
+      const h = box2.max.y - box2.min.y;
+      controls.target.set(0, h / 2, 0);
+      camera.position.set(1.9, h / 2 + 0.9, 1.9);
+      controls.update();
       $('viewerMsg').style.display = 'none';
       $('viewerBar').hidden = false;
       $('viewerTitle').textContent =
-        job.prompt ? `"${job.prompt.slice(0, 60)}"` : `Image job ${job.id}`;
+        job.assetName || (job.prompt ? `"${job.prompt.slice(0, 60)}"` : `Image job ${job.id}`);
+      const info = $('aiInfo');
+      if (job.enhancedPrompt) {
+        info.innerHTML = `<b>🧠 AI ne samjha:</b> ${escapeHtml(job.enhancedPrompt)}`;
+        info.hidden = false;
+      } else {
+        info.hidden = true;
+      }
       if (!job.hasThumb) captureThumb(job.id);
     },
     undefined,
@@ -253,7 +284,8 @@ $('downloadBtn').onclick = async () => {
 // ---------- History ----------
 const STATUS_LABEL = {
   queued: '🟡 Queue me hai...',
-  generating: '<span class="spin">⚙️</span> Ban raha hai...',
+  analyzing: '<span class="spin">🧠</span> AI prompt analyse kar raha hai...',
+  generating: '<span class="spin">⚙️</span> 3D model ban raha hai...',
   done: '✅ Ready',
   failed: '❌ Fail',
 };
@@ -299,7 +331,7 @@ async function refreshHistory() {
         ? `<img class="hthumb" src="${thumbSrc}" alt="" />`
         : `<div class="hthumb">${icon}</div>`}
       <div class="hinfo">
-        <div class="hprompt">${icon} ${escapeHtml(job.prompt || 'Image se 3D')}</div>
+        <div class="hprompt" title="${escapeHtml(job.enhancedPrompt || job.prompt || '')}">${icon} ${escapeHtml(job.assetName || job.prompt || 'Image se 3D')}</div>
         <div class="hmeta">${timeAgo(job.createdAt)}</div>
         <div class="hstatus ${job.status}">${STATUS_LABEL[job.status]}${
           job.status === 'failed' && job.error ? ` — ${escapeHtml(job.error.slice(0, 80))}` : ''}</div>
