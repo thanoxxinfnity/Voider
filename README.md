@@ -17,25 +17,44 @@ export karo. Koi fake nahi — asli NVIDIA API, asli GLB models. 🎮
   generation server pe chalti rahegi. History me result mil jayega.
 - 🌀 Live 3D viewer (rotate / zoom / pan) — three.js
 
-## 🚀 Setup (2 minute)
+## ⚠️ Pehle ye padho
 
-1. **Node.js 18+** chahiye ([nodejs.org](https://nodejs.org) se install karo)
+Ye app **GitHub Pages pe NAHI chalega** — isme Node.js server hai jo
+background generation aur history sambhalta hai, aur GitHub Pages sirf
+static files dikhata hai. Chalane ke 2 tarike hain (dono neeche):
 
-2. Project folder me terminal kholo aur:
+## 🚀 Tarika 1: Apne computer pe (sabse easy)
 
-   ```bash
-   npm install
-   npm start
-   ```
-
-3. Browser me kholo: **http://localhost:3000**
-
-4. Pehli baar khulne par ek dialog aayega — usme apni **NVIDIA API key**
-   (`nvapi-...`) paste karo. Key free me [build.nvidia.com](https://build.nvidia.com)
-   se milti hai. Key tumhare computer par local `.env` file me save hoti
-   hai — kahin upload nahi hoti.
+1. **Node.js** install karo — [nodejs.org](https://nodejs.org) se **LTS**
+   version (agar pehle se nahi hai).
+2. Ye repo download karo: GitHub pe green **Code** button → **Download ZIP**
+   → ZIP extract karo.
+3. Folder me:
+   - **Windows**: `start-windows.bat` pe double-click karo
+   - **Mac/Linux**: terminal me `./start-mac-linux.sh`
+4. Browser khud khul jayega (**http://localhost:3000**). Pehli baar ek
+   dialog aayega — usme apni **NVIDIA API key** (`nvapi-...`) paste karo.
+   Key free me [build.nvidia.com](https://build.nvidia.com) se milti hai
+   aur sirf tumhare computer ki `.env` file me save hoti hai.
 
 Bas! Ab prompt likho ya image daalo aur **⚡ 3D Model Banao** dabao.
+Kuch fail ho to Settings (⚙️) me **🔍 Connection Test** dabao — wo exact
+problem bata dega.
+
+## 🌐 Tarika 2: Internet pe free hosting (Render.com)
+
+Agar website ki tarah kahin se bhi kholna hai:
+
+1. [render.com](https://render.com) pe free account banao (GitHub se login)
+2. **New → Blueprint** → apna `Voider` repo select karo
+   (branch: `claude/nvidia-trellis-3d-generation-7o332r`)
+3. Deploy hone do (~2 min) — Render tumhe ek URL dega
+   (jaise `voider-3d-studio.onrender.com`)
+4. Us URL pe app kholke Settings me apni NVIDIA key daalo
+
+> Note: Free plan pe server kuch der idle rehne par so jaata hai (pehli
+> request me ~30 sec lagte hain) aur restart par purani history mit
+> sakti hai. Railway/Fly.io ke liye `Dockerfile` bhi included hai.
 
 ## 🔐 API key ke baare me (IMPORTANT)
 

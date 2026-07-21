@@ -1,0 +1,11 @@
+# Render.com free hosting blueprint — "New > Blueprint" me ye repo select karo.
+services:
+  - type: web
+    name: voider-3d-studio
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NVIDIA_API_KEY
+        sync: false # Render dashboard me apni key daalna (ya app ke Settings me)
