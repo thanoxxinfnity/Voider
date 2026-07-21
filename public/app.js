@@ -58,6 +58,32 @@ $('saveKeyBtn').onclick = async () => {
   toast('✅ API key save ho gayi!');
 };
 
+$('testBtn').onclick = async () => {
+  const box = $('testResult');
+  box.hidden = false;
+  box.innerHTML = '⏳ NVIDIA services test ho rahi hain...';
+  try {
+    const res = await fetch('/api/test', { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Test fail');
+    const line = (name, r) => {
+      if (r.ok) return `✅ <b>${name}</b>: chal raha hai (HTTP ${r.status})`;
+      let hint = '';
+      if (r.status === 401 || r.status === 403) hint = ' — key galat/expired hai, nayi key daalo';
+      else if (r.status === 429) hint = ' — rate limit/credits khatam';
+      else if (r.status === 404) hint = ' — endpoint nahi mila (mujhe batao, main URL fix karunga)';
+      else if (r.status === 0) hint = ' — network problem (internet/firewall check karo)';
+      return `❌ <b>${name}</b>: HTTP ${r.status}${hint}<br><span class="mono">${escapeHtml((r.detail || '').slice(0, 200))}</span>`;
+    };
+    box.innerHTML = [
+      line('LLM (prompt analysis)', data.llm),
+      line('TRELLIS (3D generation)', data.trellis),
+    ].join('<br>');
+  } catch (e) {
+    box.innerHTML = `❌ Test nahi chala: ${escapeHtml(e.message)}`;
+  }
+};
+
 // ---------- Tabs ----------
 document.querySelectorAll('.tab').forEach((btn) => {
   btn.onclick = () => {

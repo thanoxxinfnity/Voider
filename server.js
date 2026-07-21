@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import {
   createJob, listJobs, getJob, deleteJob, setThumb, fileFor,
 } from './lib/jobs.js';
+import { selfTest } from './lib/nvidia.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -44,6 +45,17 @@ app.post('/api/setup', (req, res) => {
   fs.writeFileSync(envPath, env, { mode: 0o600 });
   process.env.NVIDIA_API_KEY = key;
   res.json({ ok: true });
+});
+
+app.post('/api/test', async (_req, res) => {
+  if (!process.env.NVIDIA_API_KEY) {
+    return res.status(400).json({ error: 'Pehle API key daalo' });
+  }
+  try {
+    res.json(await selfTest());
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // --- Generation + history -------------------------------------------------
