@@ -109,15 +109,27 @@ $('imgInput').onchange = (e) => e.target.files[0] && readImage(e.target.files[0]
 
 function readImage(file) {
   if (!/^image\/(png|jpeg|webp)$/.test(file.type)) return toast('Sirf PNG / JPG / WebP chalega', true);
-  if (file.size > 20 * 1024 * 1024) return toast('Image 20MB se choti honi chahiye', true);
-  const reader = new FileReader();
-  reader.onload = () => {
-    uploadedDataUrl = reader.result;
+  if (file.size > 25 * 1024 * 1024) return toast('Image 25MB se choti honi chahiye', true);
+  const img = new Image();
+  img.onload = () => {
+    // 1024px tak downscale — NVIDIA API ke liye fast aur reliable.
+    const MAX = 1024;
+    const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.width * scale);
+    canvas.height = Math.round(img.height * scale);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    // PNG rakhta hai transparency (3D ke liye best); baaki JPEG me chhota.
+    uploadedDataUrl = file.type === 'image/png'
+      ? canvas.toDataURL('image/png')
+      : canvas.toDataURL('image/jpeg', 0.92);
+    URL.revokeObjectURL(img.src);
     $('imgPreview').src = uploadedDataUrl;
     $('imgPreview').hidden = false;
     $('dropHint').hidden = true;
   };
-  reader.readAsDataURL(file);
+  img.onerror = () => toast('Image read nahi hui, koi aur file try karo', true);
+  img.src = URL.createObjectURL(file);
 }
 
 // ---------- Generate ----------
@@ -360,7 +372,7 @@ async function refreshHistory() {
         <div class="hprompt" title="${escapeHtml(job.enhancedPrompt || job.prompt || '')}">${icon} ${escapeHtml(job.assetName || job.prompt || 'Image se 3D')}</div>
         <div class="hmeta">${timeAgo(job.createdAt)}</div>
         <div class="hstatus ${job.status}">${STATUS_LABEL[job.status]}${
-          job.status === 'failed' && job.error ? ` — ${escapeHtml(job.error.slice(0, 80))}` : ''}</div>
+          job.status === 'failed' && job.error ? ` — ${escapeHtml(job.error.slice(0, 160))}` : ''}</div>
       </div>
       <div class="hactions">
         ${job.status === 'done' ? `<button class="dl" title="GLB download">⬇️</button>` : ''}
