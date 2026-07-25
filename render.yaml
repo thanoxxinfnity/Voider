@@ -4,7 +4,8 @@ services:
     name: voider-3d-studio
     runtime: node
     plan: free
-    buildCommand: npm install
+    branch: claude/nvidia-trellis-3d-generation-7o332r
+    buildCommand: echo "no build needed"
     startCommand: node server.js
     envVars:
       - key: NVIDIA_API_KEY

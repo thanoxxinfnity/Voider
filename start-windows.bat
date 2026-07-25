@@ -7,8 +7,9 @@ if errorlevel 1 (
   echo.
   echo  ============================================
   echo   Node.js install nahi hai!
-  echo   https://nodejs.org se "LTS" version install
-  echo   karo, phir ye file dobara double-click karo.
+  echo   Abhi nodejs.org khul raha hai - wahan se
+  echo   "LTS" version install karo, phir ye file
+  echo   dobara double-click karo.
   echo  ============================================
   echo.
   start https://nodejs.org
@@ -16,16 +17,10 @@ if errorlevel 1 (
   exit /b 1
 )
 
-if not exist node_modules (
-  echo Pehli baar setup ho raha hai, thoda ruko...
-  call npm install
-)
-
 echo.
 echo  Voider 3D Studio start ho raha hai...
-echo  Browser khud khul jayega: http://localhost:3000
+echo  Browser khud khul jayega.
 echo  (Band karne ke liye ye window close kar do)
 echo.
-start "" http://localhost:3000
 node server.js
 pause

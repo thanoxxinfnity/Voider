@@ -25,14 +25,17 @@ static files dikhata hai. Chalane ke 2 tarike hain (dono neeche):
 
 ## 🚀 Tarika 1: Apne computer pe (sabse easy)
 
+**Koi `npm install` nahi chahiye — sab kuch project me included hai!**
+
 1. **Node.js** install karo — [nodejs.org](https://nodejs.org) se **LTS**
-   version (agar pehle se nahi hai).
+   version (agar pehle se nahi hai). Bas ye ek cheez chahiye.
 2. Ye repo download karo: GitHub pe green **Code** button → **Download ZIP**
    → ZIP extract karo.
 3. Folder me:
    - **Windows**: `start-windows.bat` pe double-click karo
    - **Mac/Linux**: terminal me `./start-mac-linux.sh`
-4. Browser khud khul jayega (**http://localhost:3000**). Pehli baar ek
+4. **Browser apne aap khul jayega.** (Agar port 3000 busy hua to server
+   khud doosra port le lega aur sahi link khol dega.) Pehli baar ek
    dialog aayega — usme apni **NVIDIA API key** (`nvapi-...`) paste karo.
    Key free me [build.nvidia.com](https://build.nvidia.com) se milti hai
    aur sirf tumhare computer ki `.env` file me save hoti hai.
